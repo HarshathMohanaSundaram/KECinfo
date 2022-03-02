@@ -16,6 +16,11 @@ enum PasswordReset{
   LinkNotSent
 }
 
+enum ResentVerify{
+  VerificationSent,
+  VerificationNotSent
+}
+
 enum ConnectionStateName{
   Connect,
   Pending,

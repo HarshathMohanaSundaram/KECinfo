@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chat_app/BackEnd/Firebase/OnlineUserManagement/cloud_data_management.dart';
 import 'package:chat_app/FrontEnd/MessagesScreen/config.dart';
 import 'package:chat_app/FrontEnd/NewChat/customTabBar.dart';
@@ -16,8 +18,9 @@ class SelectUser extends StatefulWidget {
   final String selectedDepartment;
   final String selectedCharacter;
   final String selectedDegree;
+  final String userProfile;
 
-  SelectUser({required this.tabs,required this.userMail,required this.userCharacter,required this.selectedCharacter,required this.selectedDepartment,required this.selectedDegree, Key? key})
+  SelectUser({required this.tabs,required this.userProfile,required this.userMail,required this.userCharacter,required this.selectedCharacter,required this.selectedDepartment,required this.selectedDegree, Key? key})
       : super(key: key);
 
   @override
@@ -33,8 +36,8 @@ class _SelectUserState extends State<SelectUser> with TickerProviderStateMixin {
   Future<void> _fetchDetails(String character) async{
     if(mounted){
       setState(() {
-        _isLoading = true;
         _userList=[];
+        _isLoading = true;
       });
     }
     final Stream<QuerySnapshot<Map<String, dynamic>>>? realTimeSnapshot = await _cloudStoreDataManagement.fetchAllUserDetails(character: widget.selectedCharacter);
@@ -133,6 +136,9 @@ class _SelectUserState extends State<SelectUser> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final tabs = widget.tabs;
     print("UserList: $_userList");
+    final jsonList = _userList.map((item) =>jsonEncode(item)).toList();
+    final uniqueJsonList = jsonList.toSet().toList();
+    final uniqueList = uniqueJsonList.map((item) => jsonDecode(item)).toList();
     return Scaffold(
       appBar: SelectUserAppBar(controller: controller, tabs: tabs),
       backgroundColor: bodyColor,
@@ -145,61 +151,65 @@ class _SelectUserState extends State<SelectUser> with TickerProviderStateMixin {
               controller: controller,
               children:[
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context, index){
-                      return (_userList[index]["Designation"] == "HOD")
+                      return (uniqueList[index]["Designation"] == "HOD")
                           ?User(
-                          name:_userList[index]["UserName"],
+                          name:uniqueList[index]["UserName"],
                           color: index % 2 == 0 ? lightBlue: royalBlue,
                           department: widget.selectedDepartment,
-                          image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                          image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                           )
                           :SizedBox.shrink();
                     }
                 ),
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context, index){
-                      return (_userList[index]["Designation"] == "Professor")
+                      return (uniqueList[index]["Designation"] == "Professor")
                           ?User(
-                        name:_userList[index]["UserName"],
+                        name:uniqueList[index]["UserName"],
                         color: index % 2 == 0 ? lightBlue: royalBlue,
                         department: widget.selectedDepartment,
-                        image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                        image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                       )
                       :SizedBox.shrink();
                     }
                 ),
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context, index){
-                      return (_userList[index]["Designation"] == "Assisstant Professor")
+                      return (uniqueList[index]["Designation"] == "Assisstant Professor")
                           ?User(
-                        name:_userList[index]["UserName"],
+                        name:uniqueList[index]["UserName"],
                         color: index % 2 == 0 ? lightBlue: royalBlue,
                         department: widget.selectedDepartment,
-                        image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                        image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                       )
                       :SizedBox.shrink();
                     }
                 ),
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context, index){
-                      return (_userList[index]["Designation"] == "Associate Professor")
+                      return (uniqueList[index]["Designation"] == "Associate Professor")
                           ?User(
-                        name:_userList[index]["UserName"],
+                        name:uniqueList[index]["UserName"],
                         color: index % 2 == 0 ? lightBlue: royalBlue,
                         department: widget.selectedDepartment,
-                        image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                        image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                       )
                       :SizedBox.shrink();
                     }
@@ -211,31 +221,33 @@ class _SelectUserState extends State<SelectUser> with TickerProviderStateMixin {
               controller: controller,
               children: [
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context,index){
-                      return (_userList[index]["Year"] == "I")
+                      return (uniqueList[index]["Year"] == "I")
                           ?User(
-                          name: _userList[index]["UserName"],
+                          name: uniqueList[index]["UserName"],
                           color:  index % 2 == 0 ? lightBlue: royalBlue,
                           department: widget.selectedDepartment,
-                          image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                          image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                       )
                       :SizedBox.shrink();
                     }
                 ),
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context,index){
-                      return (_userList[index]["Year"] == "II")
+                      return (uniqueList[index]["Year"] == "II")
                           ?User(
-                          name: _userList[index]["UserName"],
+                          name: uniqueList[index]["UserName"],
                           color:  index % 2 == 0 ? lightBlue: royalBlue,
                           department: widget.selectedDepartment,
-                          image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                          image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                       )
                       :SizedBox.shrink();
                     }
@@ -247,46 +259,49 @@ class _SelectUserState extends State<SelectUser> with TickerProviderStateMixin {
                controller: controller,
                children: [
                  ListView.builder(
-                     itemCount: _userList.length,
+                     itemCount: uniqueList.length,
                      itemBuilder: (context,index){
-                       return (_userList[index]["Year"] == "I")
+                       return (uniqueList[index]["Year"] == "I")
                            ?User(
-                           name: _userList[index]["UserName"],
+                           name: uniqueList[index]["UserName"],
                            color:  index % 2 == 0 ? lightBlue: royalBlue,
                            department: widget.selectedDepartment,
-                           image: _userList[index]["Profile"],
-                         oppositeMail: _userList[index]["UserMail"],
+                           image: uniqueList[index]["Profile"],
+                         oppositeMail: uniqueList[index]["UserMail"],
                          currentMail: widget.userMail,
+                         currentProfile: widget.userProfile,
                        )
                        :SizedBox.shrink();
                      }
                  ),
                  ListView.builder(
-                     itemCount: _userList.length,
+                     itemCount: uniqueList.length,
                      itemBuilder: (context,index){
-                       return (_userList[index]["Year"] == "II")
+                       return (uniqueList[index]["Year"] == "II")
                            ?User(
-                           name: _userList[index]["UserName"],
+                           name: uniqueList[index]["UserName"],
                            color:  index % 2 == 0 ? lightBlue: royalBlue,
                            department: widget.selectedDepartment,
-                           image: _userList[index]["Profile"],
-                         oppositeMail: _userList[index]["UserMail"],
+                           image: uniqueList[index]["Profile"],
+                         oppositeMail: uniqueList[index]["UserMail"],
                          currentMail: widget.userMail,
+                         currentProfile: widget.userProfile,
                        )
                        :SizedBox.shrink();
                      }
                  ),
                  ListView.builder(
-                     itemCount: _userList.length,
+                     itemCount: uniqueList.length,
                      itemBuilder: (context,index){
-                       return (_userList[index]["Year"] == "III")
+                       return (uniqueList[index]["Year"] == "III")
                            ?User(
-                           name: _userList[index]["UserName"],
+                           name: uniqueList[index]["UserName"],
                            color:  index % 2 == 0 ? lightBlue: royalBlue,
                            department: widget.selectedDepartment,
-                           image: _userList[index]["Profile"],
-                         oppositeMail: _userList[index]["UserMail"],
+                           image: uniqueList[index]["Profile"],
+                         oppositeMail: uniqueList[index]["UserMail"],
                          currentMail: widget.userMail,
+                         currentProfile: widget.userProfile,
                        )
                        :SizedBox.shrink();
                      }
@@ -298,61 +313,65 @@ class _SelectUserState extends State<SelectUser> with TickerProviderStateMixin {
               controller: controller,
               children: [
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context,index){
-                      return (_userList[index]["Year"] == "I")
+                      return (uniqueList[index]["Year"] == "I")
                           ?User(
-                          name: _userList[index]["UserName"],
+                          name: uniqueList[index]["UserName"],
                           color:  index % 2 == 0 ? lightBlue: royalBlue,
                           department: widget.selectedDepartment,
-                          image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                          image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                       )
                       :SizedBox.shrink();
                     }
                 ),
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context,index){
-                      return (_userList[index]["Year"] == "II")
+                      return (uniqueList[index]["Year"] == "II")
                           ?User(
-                          name: _userList[index]["UserName"],
+                          name: uniqueList[index]["UserName"],
                           color:  index % 2 == 0 ? lightBlue: royalBlue,
                           department: widget.selectedDepartment,
-                          image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                          image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                       )
                       :SizedBox.shrink();
                     }
                 ),
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context,index){
-                      return (_userList[index]["Year"] == "III")
+                      return (uniqueList[index]["Year"] == "III")
                           ?User(
-                          name: _userList[index]["UserName"],
+                          name: uniqueList[index]["UserName"],
                           color:  index % 2 == 0 ? lightBlue: royalBlue,
                           department: widget.selectedDepartment,
-                          image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                          image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                       )
                       :SizedBox.shrink();
                     }
                 ),
                 ListView.builder(
-                    itemCount: _userList.length,
+                    itemCount: uniqueList.length,
                     itemBuilder: (context,index){
-                      return (_userList[index]["Year"] == "IV")
+                      return (uniqueList[index]["Year"] == "IV")
                           ?User(
-                          name: _userList[index]["UserName"],
+                          name: uniqueList[index]["UserName"],
                           color:  index % 2 == 0 ? lightBlue: royalBlue,
                           department: widget.selectedDepartment,
-                          image: _userList[index]["Profile"],
-                        oppositeMail: _userList[index]["UserMail"],
+                          image: uniqueList[index]["Profile"],
+                        oppositeMail: uniqueList[index]["UserMail"],
                         currentMail: widget.userMail,
+                        currentProfile: widget.userProfile,
                       )
                       :SizedBox.shrink();
                     }
@@ -364,76 +383,81 @@ class _SelectUserState extends State<SelectUser> with TickerProviderStateMixin {
               controller: controller,
                 children: [
                   ListView.builder(
-                      itemCount: _userList.length,
+                      itemCount: uniqueList.length,
                       itemBuilder: (context,index){
-                        return (_userList[index]["Year"] == "I")
+                        return (uniqueList[index]["Year"] == "I")
                             ?User(
-                            name: _userList[index]["UserName"],
+                            name: uniqueList[index]["UserName"],
                             color:  index % 2 == 0 ? lightBlue: royalBlue,
                             department: widget.selectedDepartment,
-                            image: _userList[index]["Profile"],
-                          oppositeMail: _userList[index]["UserMail"],
+                            image: uniqueList[index]["Profile"],
+                          oppositeMail: uniqueList[index]["UserMail"],
                           currentMail: widget.userMail,
+                          currentProfile: widget.userProfile,
                         )
                         :SizedBox.shrink();
                       }
                   ),
                   ListView.builder(
-                      itemCount: _userList.length,
+                      itemCount: uniqueList.length,
                       itemBuilder: (context,index){
-                        return (_userList[index]["Year"] == "II")
+                        return (uniqueList[index]["Year"] == "II")
                             ?User(
-                            name: _userList[index]["UserName"],
+                            name: uniqueList[index]["UserName"],
                             color:  index % 2 == 0 ? lightBlue: royalBlue,
                             department: widget.selectedDepartment,
-                            image: _userList[index]["Profile"],
-                          oppositeMail: _userList[index]["UserMail"],
+                            image: uniqueList[index]["Profile"],
+                          oppositeMail: uniqueList[index]["UserMail"],
                           currentMail: widget.userMail,
+                          currentProfile: widget.userProfile,
                         )
                         :SizedBox.shrink();
                       }
                   ),
                   ListView.builder(
-                      itemCount: _userList.length,
+                      itemCount: uniqueList.length,
                       itemBuilder: (context,index){
-                        return (_userList[index]["Year"] == "III")
+                        return (uniqueList[index]["Year"] == "III")
                             ?User(
-                            name: _userList[index]["UserName"],
+                            name: uniqueList[index]["UserName"],
                             color:  index % 2 == 0 ? lightBlue: royalBlue,
                             department: widget.selectedDepartment,
-                            image: _userList[index]["Profile"],
-                            oppositeMail: _userList[index]["UserMail"],
+                            image: uniqueList[index]["Profile"],
+                            oppositeMail: uniqueList[index]["UserMail"],
                             currentMail: widget.userMail,
+                          currentProfile: widget.userProfile,
                         )
                         :SizedBox.shrink();
                       }
                   ),
                   ListView.builder(
-                      itemCount: _userList.length,
+                      itemCount: uniqueList.length,
                       itemBuilder: (context,index){
-                        return (_userList[index]["Year"] == "IV")
+                        return (uniqueList[index]["Year"] == "IV")
                             ?User(
-                            name: _userList[index]["UserName"],
+                            name: uniqueList[index]["UserName"],
                             color:  index % 2 == 0 ? lightBlue: royalBlue,
                             department: widget.selectedDepartment,
-                            image: _userList[index]["Profile"],
-                          oppositeMail: _userList[index]["UserMail"],
+                            image: uniqueList[index]["Profile"],
+                          oppositeMail: uniqueList[index]["UserMail"],
                           currentMail: widget.userMail,
+                          currentProfile: widget.userProfile,
                         )
                         :SizedBox.shrink();
                       }
                   ),
                   ListView.builder(
-                      itemCount: _userList.length,
+                      itemCount: uniqueList.length,
                       itemBuilder: (context,index){
-                        return (_userList[index]["Year"] == "V")
+                        return (uniqueList[index]["Year"] == "V")
                             ?User(
-                            name: _userList[index]["UserName"],
+                            name: uniqueList[index]["UserName"],
                             color:  index % 2 == 0 ? lightBlue: royalBlue,
                             department: widget.selectedDepartment,
-                            image: _userList[index]["Profile"],
-                          oppositeMail: _userList[index]["UserMail"],
+                            image: uniqueList[index]["Profile"],
+                          oppositeMail: uniqueList[index]["UserMail"],
                           currentMail: widget.userMail,
+                          currentProfile: widget.userProfile,
                         )
                         :SizedBox.shrink();
                       }
@@ -498,9 +522,11 @@ class User extends StatelessWidget {
   final String image;
   final String oppositeMail;
   final String currentMail;
+  final String currentProfile;
   const User(
       {required this.name,
         required this.color,
+        required this.currentProfile,
         required this.department,
         required this.image,
         required this.oppositeMail,
@@ -556,14 +582,14 @@ class User extends StatelessWidget {
                                 if(!existing){
                                   final bool connection = await _cloudStoreDataManagement.addNewConnection(currentUserMail: currentMail, oppositeUserMail:oppositeMail);
                                   if(connection){
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ChatScreen(userName: name, profile: image,)));
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => ChatScreen(userName: name, userProfile: image,currentProfile: currentProfile,)));
                                   }
                                   else{
                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("There is some Error in creating connection please try after some times")));
                                   }
                                 }
                                 else{
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) => ChatScreen(userName: name, profile: image,)));
+                                  Navigator.push(context, MaterialPageRoute(builder: (_) => ChatScreen(userName: name, userProfile: image,currentProfile: currentProfile,)));
                                 }
                               },
                               style: ElevatedButton.styleFrom(

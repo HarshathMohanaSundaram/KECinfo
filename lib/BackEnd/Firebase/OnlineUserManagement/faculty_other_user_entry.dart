@@ -18,12 +18,13 @@ class CloudFirestoreFacultyAndOthers{
            "userCharacter":character,
            "userDepartment":department,
            "Desigination":desgination,
+           "profile_pic":profilePath,
            "connections":{},
            "connectionName":[],
+           "principalMessages":[],
            "groups":[],
            "status":"",
-           "profile_pic":profilePath,
-           "about":character
+           "about":character,
 
          });
        return true;

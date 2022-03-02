@@ -3,6 +3,7 @@ import 'package:chat_app/BackEnd/Firebase/OnlineUserManagement/cloud_data_manage
 import 'package:chat_app/BackEnd/sqflite/local_database_management.dart';
 import 'package:chat_app/FrontEnd/MessagesScreen/config.dart';
 import 'package:chat_app/FrontEnd/model/previous_message_user_structure.dart';
+import 'package:chat_app/FrontEnd/screens/home_screen.dart';
 import 'package:chat_app/Global_Uses/show_toast_messages.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:chat_app/FrontEnd/Preview/image_preview_screen.dart';
@@ -32,8 +33,9 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 class ChatScreen extends StatefulWidget {
   final String userName;
-  final String profile;
-  ChatScreen({required this.userName, required this.profile});
+  final String userProfile;
+  final String currentProfile;
+  ChatScreen({required this.userName, required this.userProfile, required this.currentProfile});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -312,15 +314,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         leading: Padding(
           padding: const EdgeInsets.only(left: 10.0),
-          child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.black54,
-            ),
-          ),
+          child: BackButton(color: Colors.black,),
         ),
         centerTitle: true,
         title: Text(
@@ -345,7 +339,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         onPressed: () {},
                         style: TextButton.styleFrom(
                             padding: const EdgeInsets.all(0)),
-                        child: Image.network(widget.profile),
+                        child: Image.network(widget.userProfile),
                       )),
                   clipBehavior: Clip.hardEdge,
                   decoration: const BoxDecoration(
@@ -1377,8 +1371,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           ? CircleAvatar(
                           radius: 23.0,
                           backgroundImage:
-                          ExactAssetImage(
-                            "assets/images/vicky.jpg",
+                          NetworkImage(
+                              _conversationMessageHolder[index]? widget.userProfile:widget.currentProfile
                           )
                       )
                           : Text(

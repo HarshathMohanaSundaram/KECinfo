@@ -550,15 +550,12 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
             outerCircleColor: Colors.black12,
             origin: Offset(0, 0),
             rotateMode: RotateMode.allRotate,
-            centerWidget: Center(
-              child: Text(
-                "KEC",
-                style: TextStyle(
+            centerWidget: const Center(
+                child: Image(
                   color: royalBlue,
-                  fontFamily: "MyraidBold",
-                  fontSize: 45.0,
-                ),
-              ),
+                  image: AssetImage('assets/images/logo_white.png'),
+                  fit: BoxFit.cover,
+                )
             ),
             children: [
               Container(
@@ -1387,9 +1384,7 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
                           ? CircleAvatar(
                           radius: 23.0,
                           backgroundImage:
-                          ExactAssetImage(
-                            "assets/images/vicky.jpg",
-                          )
+                          NetworkImage(widget.profilePath)
                       )
                           : Text(
                         '${_audioPlaySpeed.toString().contains('.0') ? _audioPlaySpeed.toString().split('.')[0] : _audioPlaySpeed}x',
@@ -1727,7 +1722,7 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
 
           }
           else{
-            showToast("Not Supported Format", _fToast,toastColor: Colors.red,fontSize: 16.0);
+            showToast("Not Supported Format", _fToast,toastColor: Colors.white,fontSize: 16.0);
           }
         });
       }

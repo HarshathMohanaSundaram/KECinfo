@@ -35,17 +35,17 @@ List departments = [
   ),
   Department(
     degree: 'UG',
-    department: 'Electrical And Electronics',
+    department: 'EEE',
     tabs:4,
   ),
   Department(
     degree: 'UG',
-    department: 'Electronics And Instrumentation',
+    department: 'E&I',
     tabs: 4,
   ),
   Department(
     degree: 'UG',
-    department: 'Electronics and Communication',
+    department: 'ECE',
     tabs: 4,
   ),
   Department(
@@ -70,12 +70,12 @@ List departments = [
   ),
   Department(
       degree: 'UG',
-      department: 'Artificial Intelligence and Data Science',
+      department: 'AI and DS',
       tabs: 4
   ),
   Department(
       degree: 'UG',
-      department: 'Artificial Intelligence and Machine Learning',
+      department: 'AI and ML',
       tabs: 4
   ),
   Department(
@@ -85,17 +85,17 @@ List departments = [
   ),
   Department(
       degree: 'UG',
-      department: 'B.Sc Computer Systems and Design',
+      department: 'B.Sc CSD',
       tabs: 3
   ),
   Department(
       degree: 'UG',
-      department: 'B.Sc Information Systems',
+      department: 'B.Sc IS',
       tabs: 3
   ),
   Department(
       degree: 'UG',
-      department: 'B.Sc Software Systems',
+      department: 'B.Sc SS',
       tabs: 3
   ),
   Department(
@@ -105,12 +105,12 @@ List departments = [
   ),
   Department(
       degree: 'PG',
-      department: 'Master of Business Administration',
+      department: 'MBA',
       tabs: 2
   ),
   Department(
       degree: 'PG',
-      department: 'Master of Computer Applications',
+      department: 'MCA',
       tabs: 2
   ),
   Department(

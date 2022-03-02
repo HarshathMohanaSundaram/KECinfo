@@ -146,17 +146,21 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
                   child: ListView.builder(
                       itemCount: _allConversationMessages.length,
                       itemBuilder: (context, int index){
-                        if(_chatMessageCategoryHolder[index] == ChatMessageTypes.Text)
-                          return _textConversationMessage(context,index);
-                        else if(_chatMessageCategoryHolder[index]==ChatMessageTypes.Image)
-                          return _mediaConversationManagement(context, index);
-                        else if(_chatMessageCategoryHolder[index]==ChatMessageTypes.Video)
-                          return _mediaConversationManagement(context, index);
-                        else if(_chatMessageCategoryHolder[index] == ChatMessageTypes.Document)
-                          //return _documentConversationManagement(context, index);
-                          return principalChat(time: _allConversationMessages[index][_time].toString(), date: _allConversationMessages[index][_date].toString(), chatMessageTypes: ChatMessageTypes.Document, index: index);
-                        else if(_chatMessageCategoryHolder[index] == ChatMessageTypes.Audio)
-                          return _audioConversationManagement(context,index);
+                        if (_chatMessageCategoryHolder[index] ==
+                            ChatMessageTypes.Text)
+                          return principalChat(time: _allConversationMessages[index][_time].toString(), date:_allConversationMessages[index][_date].toString(), chatMessageTypes: ChatMessageTypes.Text, index: index);
+                        else if (_chatMessageCategoryHolder[index] ==
+                            ChatMessageTypes.Image)
+                          return principalChat(time: _allConversationMessages[index][_time].toString(), date: _allConversationMessages[index][_date].toString(), chatMessageTypes: ChatMessageTypes.Image, index: index);
+                        else if (_chatMessageCategoryHolder[index] ==
+                            ChatMessageTypes.Video)
+                          return principalChat(time: _allConversationMessages[index][_time].toString(), date:_allConversationMessages[index][_date].toString(), chatMessageTypes: ChatMessageTypes.Video, index: index);
+                        else if (_chatMessageCategoryHolder[index] ==
+                            ChatMessageTypes.Document)
+                          return principalChat(time: _allConversationMessages[index][_time].toString(), date:_allConversationMessages[index][_date].toString(), chatMessageTypes: ChatMessageTypes.Document, index: index);
+                        else if (_chatMessageCategoryHolder[index] ==
+                            ChatMessageTypes.Audio)
+                          return principalChat(time: _allConversationMessages[index][_time].toString(), date: _allConversationMessages[index][_date].toString(), chatMessageTypes: ChatMessageTypes.Audio, index: index);
                         return Center();
                       }
                   ),
@@ -359,30 +363,26 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
             outerCircleColor: Colors.black12,
             origin: Offset(0, 0),
             rotateMode: RotateMode.allRotate,
-            centerWidget: Center(
-              child: Text(
-                "KEC",
-                style: TextStyle(
+            centerWidget: const Center(
+                child: Image(
                   color: royalBlue,
-                  fontFamily: "MyraidBold",
-                  fontSize: 45.0,
-                ),
-              ),
+                  image: AssetImage('assets/images/logo_white.png'),
+                  fit: BoxFit.cover,
+                )
             ),
             children: [
               Container(
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(
-                      color: Colors.black45,
-                      width: 3,
-                    )),
+                    borderRadius: BorderRadius.circular(100),),
                 child: GestureDetector(
-                  child: Icon(
-                    Icons.camera_alt_rounded,
-                    color: lightBlue,
+                  child: const FittedBox(
+                    fit: BoxFit.cover,
+                    child: Icon(
+                      Icons.camera_alt_rounded,
+                      color: lightBlue,
+                    ),
                   ),
                   onTap: () async {
                     final _pickedImage = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 50);
@@ -403,10 +403,7 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
                 height: 38,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
-                    border: Border.all(
-                      color: Colors.black45,
-                      width: 3,
-                    )),
+                    ),
                 child: GestureDetector(
                   onTap: () async {
                       if(mounted){
@@ -470,9 +467,12 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
                       });
                     }
                   },
-                  child: Icon(
-                    Icons.video_collection,
-                    color: lightBlue,
+                  child:const FittedBox(
+                    fit:BoxFit.cover,
+                    child: Icon(
+                      Icons.video_collection,
+                      color: lightBlue,
+                    ),
                   ),
                 ),
               ),
@@ -481,17 +481,17 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
                 height: 38,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
-                    border: Border.all(
-                      color: Colors.black45,
-                      width: 3,
-                    )),
+                    ),
                 child: GestureDetector(
                   onTap: () async {
                     await _pickFileStorage();
                   },
-                  child: Icon(
-                    Entypo.documents,
-                    color: lightBlue,
+                  child:const FittedBox(
+                    fit: BoxFit.cover,
+                    child: Icon(
+                      Entypo.documents,
+                      color: lightBlue,
+                    ),
                   ),
                 ),
               ),
@@ -500,14 +500,14 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
                 height: 38,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
-                    border: Border.all(
-                      color: Colors.black45,
-                      width: 3,
-                    )),
+                ),
                 child: GestureDetector(
-                    child: Icon(
-                      Icons.music_note_rounded,
-                      color: lightBlue,
+                    child:const FittedBox(
+                      fit:BoxFit.cover,
+                      child: Icon(
+                        Icons.music_note_rounded,
+                        color: lightBlue,
+                      ),
                     ),
                     onTap: () async {
                       final List<String> _allowedExtensions = [
@@ -919,7 +919,7 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
                     ),
                     onTap: () async{
                       final OpenResult openResult = await OpenFile.open(
-                          _allConversationMessages[index][_message]
+                          _allConversationMessages[index][_message]!
                       );
                       openFileResultStatus(openResult: openResult);
                     },
@@ -930,7 +930,7 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
                 :GestureDetector(
               onTap: ()async{
                 final OpenResult openResult = await OpenFile.open(
-                    _allConversationMessages[index][_message]
+                    _allConversationMessages[index][_message]!
                 );
                 openFileResultStatus(openResult: openResult);
               },
@@ -1447,7 +1447,7 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        _allConversationMessages[index].keys.first.toString(),
+                        _allConversationMessages[index][_message].toString(),
                         style: const TextStyle(
                             fontFamily: 'MyRaid',
                             color: fadedPurple,
@@ -1645,7 +1645,7 @@ class _PrincipalMessageScreenState extends State<PrincipalMessageScreen> {
                       child: GestureDetector(
                         onTap: ()async{
                           final OpenResult openResult = await OpenFile.open(
-                              _allConversationMessages[index][_message]
+                              _allConversationMessages[index][_message]!
                           );
                           openFileResultStatus(openResult: openResult);
                         },

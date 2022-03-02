@@ -1,4 +1,5 @@
 import 'package:chat_app/FrontEnd/Authentication/login.dart';
+import 'package:chat_app/FrontEnd/MessagesScreen/config.dart';
 import 'package:chat_app/Global_Uses/enum_generation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -118,7 +119,7 @@ class _SignupAreaState extends State<SignupArea> {
                             },
                           textEditingController: _email
                         ),
-                        SignupText(
+                        PasswordText(
                           icon: Icon(Icons.lock_outline_rounded),
                           label: 'Enter your Password',
                           validator: (String? value) {
@@ -130,9 +131,8 @@ class _SignupAreaState extends State<SignupArea> {
                             }
                           },
                           textEditingController: _pwd,
-                          obscureText: true,
                         ),
-                        SignupText(
+                        PasswordText(
                           icon: Icon(Icons.lock_outline_rounded),
                           label: 'Confirm Password',
                           validator:(String? value) {
@@ -148,7 +148,6 @@ class _SignupAreaState extends State<SignupArea> {
                             }
                           },
                           textEditingController:_cpwd,
-                          obscureText: true,
                         ),
                       ],
                     ),
@@ -171,6 +170,7 @@ class _SignupAreaState extends State<SignupArea> {
                     SystemChannels.textInput.invokeMethod("TextInput.hide");
                     final SignUpResults response = await _emailandpasswordauth.signUpAuth(email: _email.text, pwd: _pwd.text);
                     if (response == SignUpResults.SignUpCompleted){
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Sign Up Completed\n Verification Link has been sent to ${_email.text}")));
                       Navigator.push(context,MaterialPageRoute(builder:(_) => Login()));
                     }
                     else{
@@ -231,13 +231,11 @@ Widget SignupText(
       required Icon icon,
       required String? Function(String?)? validator,
       required TextEditingController textEditingController,
-      bool obscureText = false
     }
     ){
   return TextFormField(
     validator: validator,
     controller: textEditingController,
-    obscureText: obscureText,
     decoration: InputDecoration(
         hintText: label,
         hintStyle: const TextStyle(
@@ -247,4 +245,51 @@ Widget SignupText(
         prefixIcon: icon,
         prefixIconColor: Colors.black),
   );
+}
+
+class PasswordText extends StatefulWidget {
+  final TextEditingController textEditingController;
+  final String? Function(String?)? validator;
+  final Icon icon;
+  final String label;
+  const PasswordText({Key? key, required this.label,
+    required this.icon,
+    required this.validator,
+    required this.textEditingController,
+    }) : super(key: key);
+
+  @override
+  _PasswordTextState createState() => _PasswordTextState();
+}
+
+class _PasswordTextState extends State<PasswordText> {
+  bool _isObscure = true;
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      validator: widget.validator,
+      controller: widget.textEditingController,
+      obscureText:_isObscure,
+      decoration: InputDecoration(
+        hintText: widget.label,
+        hintStyle: const TextStyle(
+            fontFamily: 'Myraid',
+            fontSize: 16,
+            color: Color.fromRGBO(74, 61, 84, .5)),
+        prefixIcon: widget.icon,
+        prefixIconColor: Colors.black,
+        suffixIcon: IconButton(
+          icon: Icon(
+              _isObscure ? Icons.visibility : Icons.visibility_off,
+              color: lightBlue
+          ),
+          onPressed: () {
+            setState(() {
+              _isObscure = !_isObscure;
+            });
+          },
+        ),
+      ),
+    );
+  }
 }

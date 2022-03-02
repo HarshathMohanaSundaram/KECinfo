@@ -6,9 +6,10 @@ class SelectCharacter extends StatefulWidget {
   final String selectedDepartment;
   final String selectedDegree;
   final String userCharacter;
+  final String userProfile;
   final String userMail;
   final int tabs;
-  const SelectCharacter({Key? key, required this.selectedDegree, required this.selectedDepartment, required this.userCharacter,required this.userMail, required this.tabs}) : super(key: key);
+  const SelectCharacter({Key? key, required this.selectedDegree,required this.userProfile, required this.selectedDepartment, required this.userCharacter,required this.userMail, required this.tabs}) : super(key: key);
 
   @override
   State<SelectCharacter> createState() => _SelectCharacterState();
@@ -47,7 +48,7 @@ class _SelectCharacterState extends State<SelectCharacter> with TickerProviderSt
           height: 30,
         ),
         for (var i = 0; i < posts.length; i++)
-          Post(post: posts[i], color: i % 2 == 0 ? lightBlue : royalBlue, userCharacter: widget.userCharacter,userMail: widget.userMail,selectedDepartment: widget.selectedDepartment,selectedDegree: widget.selectedDegree,tabs: widget.tabs,)
+          Post(post: posts[i], color: i % 2 == 0 ? lightBlue : royalBlue, userCharacter: widget.userCharacter,userMail: widget.userMail,selectedDepartment: widget.selectedDepartment,selectedDegree: widget.selectedDegree,tabs: widget.tabs,userProfile: widget.userProfile,)
       ]),
     );
   }
@@ -101,10 +102,11 @@ class Post extends StatelessWidget {
   final Color color;
   final String userCharacter;
   final String userMail;
+  final String userProfile;
   final String selectedDepartment;
   final String selectedDegree;
   final int tabs;
-  const Post({required this.color, required this.post, required this.userMail, required this.userCharacter, required this.selectedDepartment, required this.tabs,required this.selectedDegree,Key? key})
+  const Post({required this.color, required this.userProfile,required this.post, required this.userMail, required this.userCharacter, required this.selectedDepartment, required this.tabs,required this.selectedDegree,Key? key})
       : super(key: key);
 
   @override
@@ -116,7 +118,7 @@ class Post extends StatelessWidget {
         child: ElevatedButton(
           onPressed: (){
             if(post == "Faculty"){
-              Navigator.push(context, MaterialPageRoute(builder: (_)=> SelectUser(tabs: ["HOD","Professor","Assisstant Professor","Associate Professor"], userMail: userMail, userCharacter: userCharacter, selectedCharacter: post, selectedDepartment: selectedDepartment, selectedDegree: selectedDegree)));
+              Navigator.push(context, MaterialPageRoute(builder: (_)=> SelectUser(tabs: ["HOD","Professor","Assisstant Professor","Associate Professor"], userMail: userMail, userCharacter: userCharacter, selectedCharacter: post, selectedDepartment: selectedDepartment, selectedDegree: selectedDegree,userProfile:userProfile ,)));
             }
             else{
               List year=[];
@@ -139,7 +141,8 @@ class Post extends StatelessWidget {
                   userCharacter: userCharacter,
                   selectedCharacter: post,
                   selectedDepartment: selectedDepartment,
-                  selectedDegree: selectedDegree
+                  selectedDegree: selectedDegree,
+                  userProfile: userProfile,
               )));
             }
           },

@@ -788,4 +788,45 @@ class CloudStoreDataManagement {
     }
   }
 
+  Future<void> addMemberForPrincipalCCOGroup({required Map<String,dynamic> member, required String groupId,required String groupName, required String userMail, required String profile}) async
+  {
+    List<dynamic> _groupMembers = await getMembersList(groupId: groupId);
+    bool isAvailableUsers = false;
+    if(_groupMembers.isNotEmpty) {
+      for(int i=0;i<_groupMembers.length;i++)
+      {
+        if(_groupMembers[i]["userName"] == member["userName"]){
+          isAvailableUsers = true;
+        }
+      }
+    }
+    if(!isAvailableUsers){
+      _groupMembers.add(member);
+    }
+    await FirebaseFirestore.instance.collection("groups").doc(groupId).update({
+      "members":_groupMembers
+    });
+    await FirebaseFirestore.instance.collection(_collectionname).doc(userMail).collection("groups").doc(groupId).set({
+      "groupName": groupName,
+      "groupId": groupId,
+      "groupProfile":profile,
+      "Message":[],
+      "msgCount":0,
+    });
+    final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+    await FirebaseFirestore.instance.doc("$_collectionname/$userMail").get();
+    final Map<String, dynamic>? userData = documentSnapshot.data();
+    List<dynamic>? getGroups = userData!["groups"];
+    print("Groups:$getGroups");
+    if(getGroups == null){
+      getGroups = [];
+    }
+    getGroups.insert(0, { "groupName": groupName, "groupId": groupId,});
+    userData["groups"] = getGroups;
+    print("After Adding: ${userData["groups"]}");
+    await FirebaseFirestore.instance.doc("$_collectionname/$userMail").update({
+      "groups": userData["groups"],
+    }).whenComplete(() => print("Data Added in Groups: ${userData["groups"]}"));
+  }
+
 }

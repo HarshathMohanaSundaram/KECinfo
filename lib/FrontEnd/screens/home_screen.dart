@@ -6,6 +6,7 @@ import 'package:chat_app/FrontEnd/screens/Principal/message_screen.dart';
 import 'package:chat_app/FrontEnd/screens/Principal/principal_screen.dart';
 import 'package:chat_app/FrontEnd/screens/messageDrawer.dart';
 import 'package:chat_app/FrontEnd/screens/welcome_screen.dart';
+import 'package:chat_app/Global_Uses/show_toast_messages.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/FrontEnd/widgets/recent_chats.dart';
@@ -14,6 +15,7 @@ import 'MenuScreens/about_screen.dart';
 import 'MenuScreens/profile_screen.dart';
 import 'MenuScreens/setting_screen.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 //import 'package:flutter_icons_null_safety/flutter_icons_null_safety.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
   int tMsgCount = 0;
   bool _isLoading = false;
   final CloudStoreDataManagement _cloudStoreDataManagement = CloudStoreDataManagement();
+  final FToast _fToast = FToast();
 
   void _getTotalChats({required String userMail}) async {
     int msgCount = 0;
@@ -67,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
 
   @override
   void initState() {
+    _fToast.init(context);
     _getTotalChats(userMail: widget.email);
     super.initState();
     print("status checking");
@@ -128,6 +132,7 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
             await _cloudStoreDataManagement.setStatus(staus: "Offline");
             final bool _logout = await _emailAndPasswordAuth.logout();
             if (_logout) {
+              showToast("successfully logged out", _fToast,toastColor: Colors.white,bgColor: Colors.black);
               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>Welcome()), (route) => false);
             }
             else {
@@ -235,7 +240,9 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
               children: [
                 RecentChats(userCharacter: widget.character,
                   email: widget.email,
-                  userName: widget.userName,),
+                  userName: widget.userName,
+                  profile:widget.profilepath,
+                ),
                 GroupChatScreen(
                     userName: widget.userName, userCharacter: widget.character),
                 PrincipalScreen()
@@ -247,7 +254,9 @@ class _HomeScreenState extends State<HomeScreen>with SingleTickerProviderStateMi
               children: [
                 RecentChats(userCharacter: widget.character,
                   email: widget.email,
-                  userName: widget.userName,),
+                  userName: widget.userName,
+                  profile: widget.profilepath,
+                ),
                 PrincipalMessageScreen(),
                 GroupChatScreen(
                     userName: widget.userName, userCharacter: widget.character),

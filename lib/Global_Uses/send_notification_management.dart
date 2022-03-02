@@ -18,35 +18,35 @@ class SendNotification{
             await sendNotification(
                 userToken: userToken,
                 title:(groupMessage == 0)? currUserName:groupName,
-                body: (groupMessage == 0)?"Send You a Message":'$currUserName Send You a Message'
+                body: (groupMessage == 0)?"$currUserName Send You a Message":'$groupName\n$currUserName Send You a Message'
             );
             break;
           case ChatMessageTypes.Image:
             await sendNotification(
               userToken: userToken,
               title: (groupMessage == 0)? currUserName:groupName,
-              body: (groupMessage == 0)?"Send You a Image":'$currUserName Send You a Image'
+              body: (groupMessage == 0)?"$currUserName Send You a Image":'$groupName\n$currUserName Send You a Image'
             );
             break;
           case ChatMessageTypes.Video:
             await sendNotification(
                 userToken: userToken,
                 title: (groupMessage == 0)? currUserName:groupName,
-                body: (groupMessage == 0)?"Send You a Video":'$currUserName Send You a Video'
+                body: (groupMessage == 0)?"$currUserName Send You a Video":'$groupName\n$currUserName Send You a Video'
             );
             break;
           case ChatMessageTypes.Document:
             await sendNotification(
                 userToken: userToken,
                 title: (groupMessage == 0)? currUserName:groupName,
-                body: (groupMessage == 0)?"Send You a Document":'$currUserName Send You a Document'
+                body: (groupMessage == 0)?"$currUserName Send You a Document":'$groupName\n$currUserName Send You a Document'
             );
             break;
           case ChatMessageTypes.Audio:
             await sendNotification(
                 userToken: userToken,
                 title: (groupMessage == 0)? currUserName:groupName,
-                body: (groupMessage == 0)?"Send You a Audio":'$currUserName Send You a Audio'
+                body: (groupMessage == 0)?"$currUserName Send You a Audio":'$groupName\n$currUserName Send You a Audio'
             );
             break;
         }

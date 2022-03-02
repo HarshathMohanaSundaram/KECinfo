@@ -7,7 +7,8 @@ class SelectDepartment extends StatefulWidget {
   final String userName;
   final String userCharacter;
   final String userMail;
-  const SelectDepartment({Key? key, required this.userName,required this.userCharacter, required this.userMail}) : super(key: key);
+  final String userProfile;
+  const SelectDepartment({Key? key, required this.userName,required this.userCharacter, required this.userMail, required this.userProfile}) : super(key: key);
 
   @override
   State<SelectDepartment> createState() => _SelectDepartmentState();
@@ -24,7 +25,7 @@ class _SelectDepartmentState extends State<SelectDepartment>
           children: [
             const SizedBox(height: 30,),
             for(var i = 0 ; i < departments.length ; i++ )
-              Department(degree: departments[i].degree, department: departments[i].department,tabs: departments[i].tabs,color: i % 2 == 0 ? lightBlue : royalBlue,userName: widget.userName,userCharacter: widget.userCharacter,userMail: widget.userMail,)
+              Department(degree: departments[i].degree, department: departments[i].department,tabs: departments[i].tabs,color: i % 2 == 0 ? lightBlue : royalBlue,userName: widget.userName,userCharacter: widget.userCharacter,userMail: widget.userMail,userProfile: widget.userProfile,)
           ]
       ),
     );
@@ -82,7 +83,8 @@ class Department extends StatelessWidget {
   final String userName;
   final String userMail;
   final int tabs;
-  const Department({required this.color,required this.degree,required this.department, required this.tabs,required this.userName,required this.userCharacter,required this.userMail,Key? key}) : super(key: key);
+  final String userProfile;
+  const Department({required this.color,required this.userProfile,required this.degree,required this.department, required this.tabs,required this.userName,required this.userCharacter,required this.userMail,Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +103,12 @@ class Department extends StatelessWidget {
                   userCharacter: userCharacter,
                   selectedCharacter: "Faculty",
                   selectedDegree: degree,
-                  selectedDepartment: department
+                  selectedDepartment: department,
+                 userProfile: userProfile,
               )));
             }
             else{
-              Navigator.push(context,MaterialPageRoute(builder: (_) =>SelectCharacter(selectedDegree: degree, selectedDepartment:department, userCharacter: userCharacter, userMail: userMail, tabs: tabs,)));
+              Navigator.push(context,MaterialPageRoute(builder: (_) =>SelectCharacter(selectedDegree: degree, selectedDepartment:department, userCharacter: userCharacter, userMail: userMail, tabs: tabs,userProfile: userProfile,)));
             }
           },
           style: ElevatedButton.styleFrom(

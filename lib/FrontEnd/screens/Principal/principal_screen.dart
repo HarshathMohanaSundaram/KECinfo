@@ -61,8 +61,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
     var status = await Permission.storage.request();
     if (status == PermissionStatus.granted) {
       showToast(
-          "Thanks For Storage Permission", _fToast, toastColor: Colors.white,
-          fontSize: 16.0);
+          "Thanks For Storage Permission", _fToast, toastColor: Colors.white,bgColor: Colors.black, fontSize: 16.0);
       _makeDirectoryForRecordings();
     } else {
       showToast("Some Problem arrive", _fToast, toastColor: Colors.red,
@@ -318,7 +317,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                         .size
                         .height,
                     //color: Colors.amber,
-                    child: ListView.builder(
+                    child:(_allConversationMessages.isNotEmpty)? ListView.builder(
                           itemCount: _allConversationMessages.length,
                           itemBuilder: (context, int index) {
                             if (_chatMessageCategoryHolder[index] ==
@@ -338,8 +337,18 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                               return principalChat(time: _allConversationMessages[index][_time].toString(), date: _allConversationMessages[index][_date].toString(), chatMessageTypes: ChatMessageTypes.Audio, index: index);
                             return Center();
                           }
+                      )
+                      : const Center(
+                        child: Text(
+                          "Principal Appears Here",
+                          style: TextStyle(
+                            fontFamily: "MyRaidBold",
+                            color: lightBlue,
+                            fontSize: 22,
+                          ),
+                        ),
                       ),
-                ),
+                    ),
               ],
             ),
           ),
@@ -532,7 +541,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        _allConversationMessages[index].keys.first.toString(),
+                        _allConversationMessages[index][_message].toString(),
                         style: const TextStyle(
                             fontFamily: 'MyRaid',
                             color: fadedPurple,
@@ -558,14 +567,14 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                     child: FittedBox(
                       fit: BoxFit.cover,
                       child:GestureDetector(
-                          onTap: (){
-                            Navigator.push(context,MaterialPageRoute(builder: (_) => ImageViewScreen(
-                                imagePath: _allConversationMessages[index][_message].toString(),
-                                imageProviderCategory: ImageProviderCategory.FileImage)));
-                          },
-                          child: Image(image: FileImage(File(_allConversationMessages[index][_message].toString()))),
-                        ),
+                        onTap: (){
+                          Navigator.push(context,MaterialPageRoute(builder: (_) => ImageViewScreen(
+                              imagePath: _allConversationMessages[index][_message].toString(),
+                              imageProviderCategory: ImageProviderCategory.FileImage)));
+                        },
+                        child: Image(image: FileImage(File(_allConversationMessages[index][_message].toString()))),
                       ),
+                    ),
                   )),
             if(chatMessageTypes == ChatMessageTypes.Video)
               LayoutBuilder(
@@ -583,10 +592,10 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                     child: FittedBox(
                       fit: BoxFit.cover,
                       child: GestureDetector(
-                        onTap: ()async{
-                          final OpenResult openResult = await OpenFile.open(_allConversationMessages[index][_message].toString().split("+")[1]);
-                          openFileResultStatus(openResult: openResult);
-                        },
+                          onTap: ()async{
+                            final OpenResult openResult = await OpenFile.open(_allConversationMessages[index][_message].toString().split("+")[1]);
+                            openFileResultStatus(openResult: openResult);
+                          },
                           child: Image(
                               image:FileImage(
                                   File(_allConversationMessages[index][_message].toString().split("+")[0])))),
@@ -594,7 +603,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                   )),
             if(chatMessageTypes == ChatMessageTypes.Audio)
               LayoutBuilder(
-                builder: (context, constraints) => Container(
+                  builder: (context, constraints) => Container(
                       width: constraints.maxWidth,
                       height: 50,
                       clipBehavior: Clip.hardEdge,
@@ -730,7 +739,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                       child: GestureDetector(
                         onTap: ()async{
                           final OpenResult openResult = await OpenFile.open(
-                              _allConversationMessages[index][_message]
+                              _allConversationMessages[index][_message]!
                           );
                           openFileResultStatus(openResult: openResult);
                         },
@@ -787,5 +796,4 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
       ),
     );
   }
-
 }

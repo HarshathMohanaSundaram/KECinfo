@@ -126,7 +126,7 @@ class _LoginAreaState extends State<LoginArea> {
                               },
                              textEditingController: _email,
                           ),
-                          LoginText(
+                          PasswordText(
                               icon: Icon(Icons.lock_outline_rounded),
                               label: 'Enter your Password',
                               validator: (String? value) {
@@ -137,7 +137,6 @@ class _LoginAreaState extends State<LoginArea> {
                                 return null;
                               },
                             textEditingController: _pwd,
-                            obscureText: true,
                           ),
                           GestureDetector(
                             onTap: () =>forgotPassword(),
@@ -216,7 +215,23 @@ class _LoginAreaState extends State<LoginArea> {
                         }
                       }
                       else if(_loginResults== LoginResults.EmailNotVerified){
-                        msg="Email Not Verified.\n Please Verify Your Email and then Login";
+                        final snackBar = SnackBar(
+                          content: Text('Email Not Verified\n Please Verify Your Email'),
+                          action: SnackBarAction(
+                            label: 'Resent It',
+                            onPressed: () async{
+                              final ResentVerify resentVerify = await _emailAndPasswordAuth.reSentVerification(email: _email.text, pwd:_pwd.text);
+                              if(resentVerify == ResentVerify.VerificationSent)
+                              {
+                                msg="Verification Link Has beeb Sent to Your email";
+                              }
+                              else{
+                                msg="There is UnExcepted Error in Sending Verification Mail \n Please Try again later";
+                              }
+                            },
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       }
                       else if(_loginResults== LoginResults.EmailOrPasswordInvalid)
                       {
@@ -345,7 +360,7 @@ class _LoginAreaState extends State<LoginArea> {
                       }
                     },
                     child:const CircleAvatar(
-                      radius: 35,
+                      radius: 30,
                       backgroundColor: Color.fromRGBO(0, 180, 255, 1),
                       child: Icon(Icons.send, color: Colors.white,),
                     ),
@@ -363,13 +378,11 @@ class _LoginAreaState extends State<LoginArea> {
         required Icon icon,
         required String? Function(String?)? validator,
         required TextEditingController textEditingController,
-        bool obscureText = false
       }
       ){
     return TextFormField(
       validator: validator,
       controller: textEditingController,
-      obscureText: obscureText,
       decoration: InputDecoration(
           hintText: label,
           hintStyle: const TextStyle(
@@ -380,5 +393,50 @@ class _LoginAreaState extends State<LoginArea> {
           prefixIconColor: Colors.black),
     );
   }
+}
 
+class PasswordText extends StatefulWidget {
+  final TextEditingController textEditingController;
+  final String? Function(String?)? validator;
+  final Icon icon;
+  final String label;
+  const PasswordText({Key? key, required this.label,
+    required this.icon,
+    required this.validator,
+    required this.textEditingController,}) : super(key: key);
+
+  @override
+  _PasswordTextState createState() => _PasswordTextState();
+}
+
+class _PasswordTextState extends State<PasswordText> {
+  bool _isObscure = true;
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      validator: widget.validator,
+      controller: widget.textEditingController,
+      obscureText:_isObscure,
+      decoration: InputDecoration(
+        hintText: widget.label,
+        hintStyle: const TextStyle(
+            fontFamily: 'Myraid',
+            fontSize: 16,
+            color: Color.fromRGBO(74, 61, 84, .5)),
+        prefixIcon: widget.icon,
+        prefixIconColor: Colors.black,
+        suffixIcon: IconButton(
+          icon: Icon(
+              _isObscure ? Icons.visibility : Icons.visibility_off,
+              color: lightBlue
+          ),
+          onPressed: () {
+            setState(() {
+              _isObscure = !_isObscure;
+            });
+          },
+        ),
+      ),
+    );
+  }
 }

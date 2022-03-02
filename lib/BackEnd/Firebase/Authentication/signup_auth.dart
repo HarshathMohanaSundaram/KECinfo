@@ -40,6 +40,22 @@ class EmailAndPasswordAuth{
     }
   }
 
+  Future<ResentVerify> reSentVerification({required String email, required String pwd}) async{
+    try{
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: pwd);
+      if(userCredential.user!.email != null){
+        await userCredential.user!.sendEmailVerification();
+        final bool logoutResponse =await logout();
+        return ResentVerify.VerificationSent;
+      }
+      return ResentVerify.VerificationNotSent;
+    }
+    catch(e){
+      print("Error In resent: ${e.toString()}");
+      return ResentVerify.VerificationNotSent;
+    }
+  }
+
   Future<bool> logout() async{
     try{
       await FirebaseAuth.instance.signOut();

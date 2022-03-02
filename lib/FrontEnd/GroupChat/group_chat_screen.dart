@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chat_app/BackEnd/Firebase/OnlineUserManagement/checking_character.dart';
 import 'package:chat_app/BackEnd/Firebase/OnlineUserManagement/cloud_data_management.dart';
 import 'package:chat_app/BackEnd/sqflite/local_database_management.dart';
@@ -23,9 +25,15 @@ class _GroupChatStateScreen extends State<GroupChatScreen> {
 
   CloudStoreDataManagement _cloudStoreDataManagement = CloudStoreDataManagement();
   LocalDatabase _localDatabase = LocalDatabase();
+  final String _groupName = "GroupName";
+  final String _msgCount = "MsgCounts";
+  final String _msgTime = "MessageTime";
+  final String _msg = "Message";
+  final String _groupProfile = "GroupProfile";
   final String email = FirebaseAuth.instance.currentUser!.email.toString();
   bool _isLoading = false;
   List groupList =[];
+  List<Map<String,dynamic>> _allGroups = [];
   List<int> msgCount = [];
   List<String> message = [];
   List<String> msgTime = [];
@@ -38,6 +46,7 @@ class _GroupChatStateScreen extends State<GroupChatScreen> {
    if (mounted) {
      setState(() {
        _isLoading = true;
+       _allGroups=[];
        groupList = [];
        msgCount = [];
        message = [];
@@ -181,6 +190,13 @@ class _GroupChatStateScreen extends State<GroupChatScreen> {
        }
        if(mounted){
          setState(() {
+           _allGroups.add({
+             _groupName:groups[i]['groupName'],
+             _msgCount:tmsg,
+             _msg:msg,
+             _msgTime:mtime,
+             _groupProfile:_groupData["groupProfile"].toString()
+           });
            msgCount.add(tmsg);
            message.add(msg);
            msgTime.add(mtime);
@@ -211,6 +227,9 @@ class _GroupChatStateScreen extends State<GroupChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final jsonList = _allGroups.map((item) =>jsonEncode(item)).toList();
+    final uniqueJsonList = jsonList.toSet().toList();
+    final uniqueGroups = uniqueJsonList.map((item) => jsonDecode(item)).toList();
     return Scaffold(
       backgroundColor: Colors.white,
       body:Column(
@@ -226,23 +245,30 @@ class _GroupChatStateScreen extends State<GroupChatScreen> {
               ),
               child: LoadingOverlay(
                 isLoading: _isLoading,
-                child: ListView.builder(
-                    itemCount: groupList.length,
+                child:(uniqueGroups.isNotEmpty)? ListView.builder(
+                    itemCount: uniqueGroups.length,
                     itemBuilder: (context, index){
-                      return (groupList.isNotEmpty)?MessageChat(
+                      return MessageChat(
                           context: context,
                           index: index,
-                          image: groupProfile[index],
-                          name: groupName[index],
-                          msg: message[index],
-                          chatMsgType: msgType[index],
-                          time: msgTime[index],
-                          msgCount: msgCount[index],
-                      ):Center(
-                        child: Text("Your Groups Apperes Here"),
+                          image: uniqueGroups[index][_groupProfile],
+                          name: uniqueGroups[index][_groupName],
+                          msg: uniqueGroups[index][_msg],
+                          time: uniqueGroups[index][_msgTime],
+                          msgCount: uniqueGroups[index][_msgCount],
                       );
                     }
-                ),
+                )
+               :const Center(
+                  child: Text(
+                    "Your Groups Appears Here",
+                    style: TextStyle(
+                      fontFamily: "MyRaidBold",
+                      color: lightBlue,
+                      fontSize: 22,
+                    ),
+                  ),
+                )
               ),
             ),
           )
@@ -268,7 +294,6 @@ class _GroupChatStateScreen extends State<GroupChatScreen> {
         required String image,
         required String name,
         required String msg,
-        required ChatMessageTypes chatMsgType,
         required String time,
         required int msgCount,
       }

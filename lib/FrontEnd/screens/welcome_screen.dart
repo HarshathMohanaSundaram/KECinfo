@@ -57,7 +57,7 @@ class Welcome extends StatelessWidget {
                         child: Column(
                             children:const [
                               Padding(
-                                padding: EdgeInsets.only(top:20.0),
+                                padding: EdgeInsets.only(top:25.0),
                                 child: Text(
                                   'LOGIN',
                                   style: TextStyle(

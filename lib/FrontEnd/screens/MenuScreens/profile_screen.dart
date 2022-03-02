@@ -30,13 +30,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _userEmail = "Email";
   List<String> years = ["I","II","III","IV","V"];
   var _selectedDepartment = null;
-  List<String> departments = ["Civil","Mechanical","Mechatronics","Automobile","Electrical And Electronics","Electronics And Instrumentation","Electronics and Communication","Computer Science","Information Technology","Chemical","Food Technology","Artificial Intelligence and Data Science","Artificial Intelligence and Machine Learning","Computer Science and Design","B.Sc Computer Systems and Design","B.Sc Information Systems","B.Sc Software Systems","M.Sc Software Systems","Master of Business Administration","Master of Computer Applications","Construction Engineering and Management","Structural Engineering","Engineering Design","Power Electronics and Drives","Control and Instrumentation","Embedded Systems","VLSI Design","Admin","CCO"];
+  List<String> departments = ["Civil","Mechanical","Mechatronics","Automobile","EEE","E&I","ECE","Computer Science","Information Technology","Chemical","Food Technology","AI and DS","AI and ML","Computer Science and Design","B.Sc CSD","B.Sc IS","B.Sc SS","M.Sc Software Systems","MBA","MCA","Construction Engineering and Management","Structural Engineering","Engineering Design","Power Electronics and Drives","Control and Instrumentation","Embedded Systems","VLSI Design","Admin","CCO"];
   String _selectedDegree = "Degree";
   List<String>  degree = ["UG","PG"];
   String _selectedDesigination = "Faculty";
   List<String> designation = ["HOD","Professor","Assisstant Professor","Associate Professor"];
-  var _selectedCtug = null;
-  List<String> Ctug = ["Computer Designing","Software Systems","Information Systems"];
   String _profile = "profile";
 
   TextEditingController _about = TextEditingController();
@@ -65,9 +63,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if(_userDetails["userCharacter"] == "Student"){
           _selectedDegree = _userDetails["userDegree"];
           _selectedYears = _userDetails["userYear"];
-          if(_selectedDepartment == "B.Sc"){
-            _selectedCtug = _userDetails["bsc"];
-          }
         }
         else{
           _selectedDesigination = _userDetails["Desigination"];
@@ -341,9 +336,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       index =1;
                                       _selectedDepartment = department!;
                                       _userDetails["userDepartment"] = department;
-                                      if(department == "B.Sc"){
-                                        _selectedCtug = null;
-                                      }
                                     }),
                                 validator: (value) => value == null ? 'Department required' : null,
                                 items: departments.map<DropdownMenuItem<String>>((String value) {

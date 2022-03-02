@@ -34,7 +34,7 @@ class _SetUpState extends State<SetUp> {
   var _degrees = ["UG","PG"];
   var _selecteddegree = null;
   var _selectedCharacter = null;
-  var _departments = ["Civil","Mechanical","Mechatronics","Automobile","Electrical And Electronics","Electronics And Instrumentation","Electronics and Communication","Computer Science","Information Technology","Chemical","Food Technology","Artificial Intelligence and Data Science","Artificial Intelligence and Machine Learning","Computer Science and Design","B.Sc Computer Systems and Design","B.Sc Information Systems","B.Sc Software Systems","M.Sc Software Systems","Master of Business Administration","Master of Computer Applications","Construction Engineering and Management","Structural Engineering","Engineering Design","Power Electronics and Drives","Control and Instrumentation","Embedded Systems","VLSI Design","Admin","CCO"];
+  var _departments = ["Civil","Mechanical","Mechatronics","Automobile","EEE","E&I","ECE","Computer Science","Information Technology","Chemical","Food Technology","AI and DS","AI and ML","Computer Science and Design","B.Sc CSD","B.Sc IS","B.Sc SS","M.Sc Software Systems","MBA","MCA","Construction Engineering and Management","Structural Engineering","Engineering Design","Power Electronics and Drives","Control and Instrumentation","Embedded Systems","VLSI Design","Admin","CCO"];
   var _selectedDepartment = null;
   var _designation = ["HOD","Professor","Assisstant Professor","Associate Professor"];
   var _selectedDesignation = null;
@@ -45,6 +45,8 @@ class _SetUpState extends State<SetUp> {
   final CloudStoreDataManagement _cloudStoreDataManagement = CloudStoreDataManagement();
   final String _hodGroupName = "HODs";
   final String _hodGroupId = "HOD111";
+  final String _ccoGroupName = "CCOs";
+  final String _ccoGroupId = "CCO111";
   var image;
   Map<String,dynamic> userDetails={};
   var email = FirebaseAuth.instance.currentUser!.email.toString();
@@ -259,20 +261,22 @@ class _SetUpState extends State<SetUp> {
                         userDepartment: _selectedDepartment,
                         profileImagePath: downloadProfile
                       );
+                      await _localDatabase.createTableToStoreImportantData();
+                      await _localDatabase.createTableToStoreImportantDataForGroup();
                       Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder:(_) => HomeScreen(character: _selectedCharacter,email:email,userName: userName,profilepath:profilePath)), (route)=>false);
                     }
                     else{
                       msg="There is some error in registering try again!!";
                     }
                   }
-                  else if(_selectedCharacter == "Faculty"||_selectedCharacter=='CCO'){
+                  else if(_selectedCharacter == "Faculty"||_selectedCharacter=="CCO"){
                     final bool _facultyResponse = await _facultyRegister
                         .facultyotheruserentry(
                         username: userName,
                         email: email,
                         character: _selectedCharacter,
                         department: _selectedDepartment,
-                        desgination: _selectedDesignation,
+                        desgination: _selectedDesignation.toString(),
                         profilePath: downloadProfile
                     );
                     if (_facultyResponse) {
@@ -286,7 +290,19 @@ class _SetUpState extends State<SetUp> {
                         userDepartment: _selectedDepartment,
                         profileImagePath: downloadProfile
                       );
-
+                      if(_selectedDepartment=="CCO"){
+                        setState(() {
+                          userDetails.addAll({
+                            "userName": userName,
+                            "userEmail": email,
+                            "UserID": FirebaseAuth.instance.currentUser!.uid,
+                            "profile_pic": downloadProfile,
+                            "isAdmin": false,
+                          });
+                        });
+                        print("CCO Group  Called");
+                        await _cloudStoreDataManagement.addMemberForPrincipalCCOGroup(member: userDetails, groupId: _ccoGroupId, groupName: _ccoGroupName, userMail: email, profile: "https://firebasestorage.googleapis.com/v0/b/chatapp-2417b.appspot.com/o/KecProfile%2Fklogo.png?alt=media&token=a8c112c6-ce55-40cd-8a80-c7bccbb0e416");
+                      }
                       if(_selectedDesignation == "HOD"){
                         setState(() {
                           userDetails.addAll({
@@ -297,9 +313,11 @@ class _SetUpState extends State<SetUp> {
                             "isAdmin": false,
                           });
                         });
+
                         await _cloudStoreDataManagement.addMemberForPrincipalGroup(member: userDetails, groupId: _hodGroupId, groupName: _hodGroupName, userMail: email,profile: "https://firebasestorage.googleapis.com/v0/b/chatapp-2417b.appspot.com/o/KecProfile%2Fklogo.png?alt=media&token=a8c112c6-ce55-40cd-8a80-c7bccbb0e416");
                       }
-
+                      await _localDatabase.createTableToStoreImportantData();
+                      await _localDatabase.createTableToStoreImportantDataForGroup();
                       Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder:(_) => HomeScreen(character: _selectedCharacter,email:email,userName: userName,profilepath:profilePath)), (route)=>false);
                     }
                     else {
@@ -341,7 +359,9 @@ class _SetUpState extends State<SetUp> {
 
 
                       await _cloudStoreDataManagement.addMemberForPrincipalGroup(member:userDetails , groupId: _hodGroupId, groupName: _hodGroupName, userMail: email,profile:"https://firebasestorage.googleapis.com/v0/b/chatapp-2417b.appspot.com/o/KecProfile%2Fklogo.png?alt=media&token=a8c112c6-ce55-40cd-8a80-c7bccbb0e416");
-
+                      await _cloudStoreDataManagement.addMemberForPrincipalCCOGroup(member:userDetails , groupId: _hodGroupId, groupName: _hodGroupName, userMail: email,profile:"https://firebasestorage.googleapis.com/v0/b/chatapp-2417b.appspot.com/o/KecProfile%2Fklogo.png?alt=media&token=a8c112c6-ce55-40cd-8a80-c7bccbb0e416");
+                      await _localDatabase.createTableToStoreImportantData();
+                      await _localDatabase.createTableToStoreImportantDataForGroup();
                       Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder:(_) => HomeScreen(character: _selectedCharacter,email:email,userName: userName,profilepath: profilePath,)), (route)=>false);
                     }
                     else {

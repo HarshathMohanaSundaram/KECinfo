@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 class StudentUserManagement{
   final _collectionName = 'kec_users';
-  final _userid = FirebaseAuth.instance.currentUser!.uid.toString();
   Future<bool> studentuserentry({required String userName , required String email, required String character, required String department,required String year, required String degree, required String profilePath}) async{
     try{
       String? getToken = await FirebaseMessaging.instance.getToken();

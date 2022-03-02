@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chat_app/BackEnd/Firebase/OnlineUserManagement/cloud_data_management.dart';
 import 'package:chat_app/BackEnd/sqflite/local_database_management.dart';
 import 'package:chat_app/FrontEnd/MessagesScreen/config.dart';
@@ -15,7 +17,8 @@ import 'package:firebase_auth/firebase_auth.dart';
    final String userCharacter;
    final String email;
    final String userName;
-   const RecentChats({Key? key, required this.userCharacter, required this.email, required this.userName}) : super(key: key);
+   final String profile;
+   const RecentChats({Key? key, required this.userCharacter, required this.email, required this.userName, required this.profile}) : super(key: key);
 
    @override
    _RecentChatsState createState() => _RecentChatsState();
@@ -23,6 +26,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 
  class _RecentChatsState extends State<RecentChats> {
    bool _isLoading = false;
+   final String _userName = "UserName";
+   final String _userAbout = "UserAbout";
+   final String _msgCount = "MsgCounts";
+   final String _online = "OnlineStatus";
+   final String _msgTime = "MessageTime";
+   final String _msg = "Message";
+   final String _userProfile = "UserProfile";
+   List<Map<String,dynamic>> _allConnection = [];
    List<String> _allConnectionUserName = [];
    final CloudStoreDataManagement _cloudStoreDataManagement = CloudStoreDataManagement();
    final LocalDatabase _localDatabase = LocalDatabase();
@@ -40,6 +51,7 @@ import 'package:firebase_auth/firebase_auth.dart';
      if (mounted) {
        setState(() {
          _isLoading = true;
+         _allConnection=[];
          _allConnectionUserName=[];
          userAbout = [];
          msgCounts=[];
@@ -50,7 +62,6 @@ import 'package:firebase_auth/firebase_auth.dart';
          userProfile=[];
        });
      }
-
      final List<dynamic> _connectionList = queryDocumentSnapshot.get(
          "connectionName");
      print(_connectionList);
@@ -185,6 +196,16 @@ import 'package:firebase_auth/firebase_auth.dart';
            print("isOnline: $isOnline");
            if (mounted) {
              setState(() {
+               _allConnection.add({
+                 _userName:_connectedUserName,
+                 _userAbout:_about,
+                 _msgCount:msgCount,
+                 _online:isOnline,
+                 _msg:msg,
+                 _msgTime:msgTime,
+                 _userProfile:_profilePath
+               });
+               print("All Connection: $_allConnection");
                _allConnectionUserName.add(_connectedUserName);
                userAbout.add(_about);
                msgCounts.add(msgCount);
@@ -205,6 +226,7 @@ import 'package:firebase_auth/firebase_auth.dart';
        });
      }
    }
+
 
    Future<void> _fetchRealTimeDataFromCloudStorage() async {
      final realTimeSnapshot = await _cloudStoreDataManagement
@@ -230,27 +252,43 @@ import 'package:firebase_auth/firebase_auth.dart';
 
    @override
    Widget build(BuildContext context) {
+     final jsonList = _allConnection.map((item) =>jsonEncode(item)).toList();
+     final uniqueJsonList = jsonList.toSet().toList();
+     final uniqueConnection = uniqueJsonList.map((item) => jsonDecode(item)).toList();
+     print("After Removing Duplicates: $uniqueConnection");
      return Scaffold(
        body: Container(
          margin: const EdgeInsets.only(top: 20.0),
          child: LoadingOverlay(
            isLoading: _isLoading,
-           child: ListView.builder(
-             itemCount: _allConnectionUserName.length,
+           child:(uniqueConnection.isNotEmpty)? ListView.builder(
+             itemCount: uniqueConnection.length,
              itemBuilder: (context, index) {
                return MessageChat(
                    context: context,
                    index: index,
-                   image: userProfile[index],
-                   name: _allConnectionUserName[index],
-                   msg: Message[index],
-                   chatMsgType: messageType[index],
-                   time: messageTime[index],
-                   msgCount: msgCounts[index],
-                   isOnline: OnlineStatus[index]);
+                   currentProfile: widget.profile,
+                   image: uniqueConnection[index][_userProfile],
+                   name: uniqueConnection[index][_userName],
+                   msg: uniqueConnection[index][_msg],
+                   time:uniqueConnection[index][_msgTime],
+                   msgCount: uniqueConnection[index][_msgCount],
+                   isOnline: uniqueConnection[index][_online]);
              },
-           ),
+           )
+           :
+           const Center(
+             child: Text(
+               "Your Recent Chats Appears Here",
+               style: TextStyle(
+                 fontFamily: "MyRaidBold",
+                 color: lightBlue,
+                 fontSize: 22,
+               ),
+             ),
+           )
          ),
+
        ),
        floatingActionButton: FloatingActionButton(
          backgroundColor: const Color.fromRGBO(8,33,198,1),
@@ -260,7 +298,9 @@ import 'package:firebase_auth/firebase_auth.dart';
            Navigator.push(context, MaterialPageRoute(builder: (_) =>SelectDepartment(
                userName: widget.userName,
                userCharacter: widget.userCharacter,
-               userMail:widget.email)));
+               userMail:widget.email,
+              userProfile: widget.profile,
+           )));
 
          },
        ),
@@ -271,9 +311,9 @@ import 'package:firebase_auth/firebase_auth.dart';
        {required BuildContext context,
          required int index,
          required String image,
+         required String currentProfile,
          required String name,
          required String msg,
-         required ChatMessageTypes chatMsgType,
          required String time,
          required int msgCount,
          required bool isOnline}
@@ -285,7 +325,7 @@ import 'package:firebase_auth/firebase_auth.dart';
        transitionDuration: Duration(milliseconds: 500),
        transitionType: ContainerTransitionType.fadeThrough,
        openBuilder: (_,__){
-         return ChatScreen(userName: name, profile: image,);
+         return ChatScreen(userName: name, userProfile: image, currentProfile: currentProfile,);
        },
        closedBuilder: (_, __) {
          return Padding(
