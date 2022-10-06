@@ -1,8 +1,10 @@
+import 'package:chat_app/FrontEnd/widgets/recent_chat_provider.dart';
 import 'package:chat_app/Global_Uses/foreground_receive_notification_management.dart';
 import 'package:chat_app/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:provider/provider.dart';
 
 
 Future init() async{
@@ -29,11 +31,15 @@ Future init() async{
 void main() async {
 
   await init();
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: SplashScreen()
-  ),
-  );
+  runApp(
+    ChangeNotifierProvider(
+        create: (context) => RecentChatModel(),
+      child:MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: SplashScreen()
+      ),
+    ) ,
+    );
 }
 
 Future<void> notificationInitialize() async{
